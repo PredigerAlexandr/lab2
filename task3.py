@@ -1,3 +1,4 @@
+import json
 import os
 from operator import itemgetter
 from os import walk
@@ -70,8 +71,25 @@ def sortedByAttribute(path):
 
 
 ##
-def createJson(string):
-    return 1
+def createJson(sortedCsvFile, path):
+    jsonFile = sortedCsvFile
+    chunks = re.split('\[\"\[\'|\", \'|\'\]\"\]\n|\'|, |\"', jsonFile)
+    iter = 0
+    while iter != len(chunks):
+        if chunks[iter] == '':
+            chunks.pop(iter)
+            iter -= 1
+        iter += 1
+    iter = 0
+    output = []
+    while iter != len(chunks):
+        dic = {"№": int(chunks[iter]), "date/time": chunks[iter + 1], "output/input": bool(chunks[iter + 2]),
+               "sex": chunks[iter + 3]}
+        output.append(dic)
+        iter += 4
+    with open(path + "\\end.json", 'w') as outfile:
+        json.dump(output, outfile)
+    print(".json file successfully created")
 
 
 path = "C:\\Users\\Alexandr\\Desktop\\_\\4 семестр УлГТУ ИВТ\\Технологии программирования\\lab2 Task3"
@@ -81,28 +99,10 @@ print("\n".join(get_files_sizes(path)))
 
 if csvFileFlag:
     fileCsv = path + "\\" + input("Enter the CSV name of the file, wich you want to see:")
-    # print(readCsv(fileCsv))
-    # print("You have 2 attempts for sorting thr csv file")
-    # for i in range(2):
-    #     column = int(input("Enter the column by wich you want to sorting:"))
-    #     print(sortedCSV(fileCsv, column))
-    print(sortedByAttribute(fileCsv))
-    jsonFile = sortedByAttribute(fileCsv)
-    chunks = re.split('\[\"\[\'|\", \'|\'\]\"\]\n|\'|, |\"', jsonFile)
-    iter = 0;
-    while iter != len(chunks):
-        if chunks[iter] == '':
-            chunks.pop(iter)
-            iter -= 1
-        iter += 1
-    iter = 0
-    output = []
-    while iter != len(chunks):
-        per = int(chunks[iter])
-        dic = {"№": per, "date/time": chunks[iter + 1], "output/input": bool(chunks[iter + 2]),
-               "sex": chunks[iter + 3]}
-        output.pop(dic)
-        iter += 3
-
-    for i in output:
-        print(output[i])
+    print(readCsv(fileCsv))
+    print("You have 2 attempts for sorting thr csv file")
+    for i in range(2):
+        column = int(input("Enter the column by wich you want to sorting:"))
+        print(sortedCSV(fileCsv, column))
+    createJson(sortedByAttribute(fileCsv),path)
+else: print(".csv file is miss")
