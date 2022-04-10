@@ -42,10 +42,13 @@ def sortedCSV(path, column):
 def readCsv(path):
     result = ""
     with open(path) as File:
-        reader = csv.reader(File)
-        for row in reader:
-            result += (str(row) + "\n")
-    return result
+        reader = list(File.readlines()[1].split(";"))[0:]
+        # reader = csv.reader(File)
+        # for row in reader:
+        #     result += (str(row) + "\n")
+    # return result
+    print(reader)
+    return reader
 
 
 ###
@@ -88,7 +91,7 @@ def createJson(sortedCsvFile, path):
         output.append(dic)
         iter += 4
     with open(path + "\\end.json", 'w') as outfile:
-        json.dump(output, outfile)
+        json.dump(output, outfile, ensure_ascii=True)
     print(".json file successfully created")
 
 
