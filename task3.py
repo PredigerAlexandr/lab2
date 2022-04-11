@@ -1,14 +1,11 @@
 import json
 import os
-from operator import itemgetter
 from os import walk
 import re
-
-import numpy as np
 import csv
 
 
-def get_files_sizes(dirpath):
+def get_files_sizes(path):
     global csvFileFlag
     fileList = []
     for (dirpath, dirnames, filenames) in walk(path):
@@ -17,8 +14,16 @@ def get_files_sizes(dirpath):
     for i in range(len(fileList)):
         if ".csv" in fileList[i]:
             csvFileFlag = True
+
         fileInfo = os.stat(path + "\\" + fileList[i])
-        fileList[i] = fileList[i] + "--" + str(fileInfo.st_size) + "Kb"
+        countSize = 0
+        sizeFile = fileInfo.st_size
+        dicSizeName = {"0": "Kb", "1": "Mb", "2": "Gb", "3": "Tb"}
+        while (sizeFile > 1024):
+            sizeFile = sizeFile / 1024
+            countSize += 1
+
+        fileList[i] = fileList[i] + "--" + str(fileInfo.st_size) + dicSizeName[countSize]
 
     return fileList
 
@@ -43,10 +48,6 @@ def readCsv(path):
     result = ""
     with open(path) as File:
         reader = list(File.readlines()[1].split(";"))[0:]
-        # reader = csv.reader(File)
-        # for row in reader:
-        #     result += (str(row) + "\n")
-    # return result
     print(reader)
     return reader
 
